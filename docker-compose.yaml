@@ -18,12 +18,6 @@ services:
       XICFG_PG_DB: postgres
       XICFG_PG_MIGRATION: ./sql/migrations
       XICFG_JWT_SECRET: 9138e41195112b568e22480f18a42dd69b38fab5ee1a36fbf63d49b22097d22a
-      XICFG_YUNMA_TOKEN: test
-      # XICFG_TC_SECRET_ID: AKIDmX7VglohP4jFXaPzKVcZQ5WihWGwRoyt
-      # XICFG_TC_SECRET_KEY: ylLgonZ6dx2vZAj7QdTBfx2sTreCVbTu
-      # XICFG_TC_SMS_ID: 1400722731
-      # XICFG_TC_SMS_SIG_NAME: 西枝科创
-      # XICFG_TC_SMS_TEM_ID: 1509313
     volumes:
       - ./:/app
       - go-data:/go/pkg/mod
