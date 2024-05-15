@@ -1,0 +1,194 @@
+openapi: "3.0.0"
+
+info:
+  version: 1.0.0
+  title: qing
+  description: qing API set
+
+servers:
+  - url: /api/v1
+
+
+paths:
+  /auth/login:
+    post:
+      requestBody:
+        required: true
+        description: login with username or phone and password
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [usernameOrPhone, password]
+              properties:
+                usernameOrPhone:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: login successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthInfo"
+
+  /auth/code:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone, typ]
+              properties:
+                phone:
+                  type: string
+                typ:
+                  type: string
+                  enum: [register, change-password]
+      responses:
+        "202":
+          description: request is accepted
+
+  /auth/register:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, phone, password, code]
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                phone:
+                  type: string
+                code:
+                  type: string
+      responses:
+        "200":
+          description: request is accepted
+
+  /auth/change-password:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [phone, newPassword, code]
+              properties:
+                phone:
+                  type: string
+                newPassword:
+                  type: string
+                code:
+                  type: string
+
+
+  /auth/refresh-token:
+    post:
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refreshToken]
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        "200":
+          description: refresh token successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [token, refreshToken]
+                properties:
+                  token:
+                    type: string
+                  refreshToken:
+                    type: string
+
+  /auth/logout:
+    post:
+      responses:
+        "200":
+          description: logout successfully
+      security:
+        - BearerAuth: []
+
+  /auth/ping:
+    get:
+      security:
+        - BearerAuth: []
+
+  /orgs:
+    get:
+      tags:
+        - orgs
+      security:
+        - BearerAuth: []
+      description: 获取账户信息,包括余额
+      responses:
+        "200":
+          description: 查询成功
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OrgInfoRes"
+
+components:
+  schemas:
+    AuthInfo:
+      type: object
+      required: [token, refreshToken, orgID, username, phone]
+      properties:
+        token:
+          type: string
+        refreshToken:
+          type: string
+        username:
+          type: string
+        phone:
+          type: string
+        id:
+          type: string
+          format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        orgID:
+          type: string
+          format: uuid
+
+    OrgInfoRes:
+      description: 组织信息
+      type: object
+      required: [name, id]
+      properties:
+        name:
+          type: string
+          description: 组织名称
+        id:
+          type: string
+          description: 组织ID
+          format: uuid
+        ownerId:
+          type: string
+          description: 组织拥有者ID
+          format: uuid
+
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

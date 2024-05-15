@@ -1,0 +1,42 @@
+version: "3.9"
+services:
+  dev:
+    build: 
+      dockerfile: ./Dockerfile.dev
+    ports:
+      - "8000:8000"
+    command:
+    - go
+    - run
+    - cmd/main.go
+    environment:
+      XICFG_PORT: 8000
+      XICFG_PG_HOST: db
+      XICFG_PG_PORT: 5432
+      XICFG_PG_USER: postgres
+      XICFG_PG_PASSWORD: postgres
+      XICFG_PG_DB: postgres
+      XICFG_PG_MIGRATION: ./sql/migrations
+      XICFG_JWT_SECRET: 9138e41195112b568e22480f18a42dd69b38fab5ee1a36fbf63d49b22097d22a
+      XICFG_YUNMA_TOKEN: test
+      # XICFG_TC_SECRET_ID: AKIDmX7VglohP4jFXaPzKVcZQ5WihWGwRoyt
+      # XICFG_TC_SECRET_KEY: ylLgonZ6dx2vZAj7QdTBfx2sTreCVbTu
+      # XICFG_TC_SMS_ID: 1400722731
+      # XICFG_TC_SMS_SIG_NAME: 西枝科创
+      # XICFG_TC_SMS_TEM_ID: 1509313
+    volumes:
+      - ./:/app
+      - go-data:/go/pkg/mod
+      - go-build-data:/root/.cache/go-build
+  db: 
+    image: "postgres:latest"
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+volumes:
+  db-data:
+  go-data:
+  go-build-data:
