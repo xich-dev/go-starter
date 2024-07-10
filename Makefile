@@ -40,6 +40,10 @@ gen-wire: install-wire
 
 SQLC_VERSION=1.25.0
 QUERIER_DIR=$(PROJECT_DIR)/pkg/model/querier
+SQLC_BIN=$(PROJECT_DIR)/bin/sqlc
+
+install-sqlc:
+	DIR=$(PROJECT_DIR)/bin VERSION=${SQLC_VERSION} ./scripts/install-sqlc.sh
 
 clean-querier:
 	@rm -f $(QUERIER_DIR)/*sql.gen.go
@@ -48,8 +52,8 @@ clean-querier:
 	@rm -f $(QUERIER_DIR)/models_gen.go
 	@rm -f $(QUERIER_DIR)/querier_gen.go
 
-gen-querier: clean-querier
-	docker run --rm -v $(PROJECT_DIR):/src -w /src sqlc/sqlc:$(SQLC_VERSION) generate
+gen-querier: install-sqlc clean-querier
+	$(SQLC_BIN) generate
 
 ###################################################
 ### mock 
